@@ -96,7 +96,8 @@
             document.getElementById('app').innerHTML = `
                 <div id="image" onclick="doClick()">${smiley}</div>
                 <div id="pointsInfo">${points}</div>
-                <button onclick="buyUpgrade(${upgradePointCost})">Kjøp oppgraderinger: ${upgradePointCost} poeng (${currentModifier})</button>
+                <button onclick="buyUpgrade(${upgradePointCost})">
+                Kjøp oppgraderinger: ${upgradePointCost} poeng (${currentModifier})</button>
                 <br/>
                 <button onclick="changeUpgradeAmount('1')">1x</button>
                 <button onclick="changeUpgradeAmount('5')">5x</button>
