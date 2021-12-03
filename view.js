@@ -22,7 +22,7 @@ function updateView() {
             <input type="text" ${model.leaderBoardSubmitState}>
             <button onclick="leaderBoardSubmit(this)" ${model.leaderBoardSubmitState}>Submit</button>
             <br>  
-            <text>Score: ${model.player.totalPoints}</text>
+            <text>Score <br/> ${model.player.totalPoints}</text>
         </div>
         <table class="leaderBoardTable">
                 <tr>
