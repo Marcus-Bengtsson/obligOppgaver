@@ -1,0 +1,84 @@
+body {
+    background-color:rgb(180, 180, 180);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+div {
+    margin: 5px;
+    user-select: none;
+}
+
+button {   
+    height: 30px;
+    background-color: rgb(128, 127, 127);
+}
+button:hover {
+    background-color:rgb(104, 104, 104);
+}
+table, tr, th, td {
+    background-color: rgb(143, 143, 143);
+}
+.leaderBoardTable {
+    position: absolute;
+    right: 3vw;
+    top: 20vh;
+    width: 250px;
+    font-size: 20px;
+    border: 1px solid black;
+}
+.leaderBoardInput {
+    position: absolute;
+    right: 3vw;
+    top: 2vh;
+    width: 250px;
+    height: 16vh;
+    font-size: 25px;
+    margin: 0px;
+    text-align: center;
+    z-index: 10;
+}
+.leaderBoardInput>text {
+    position: relative;
+    top: 3vh;
+}
+.upgradeButton {
+    width: 320px;
+    margin: 10px;
+}
+.pointsPerClickDiv {
+    text-align: center;
+    width: 320px;
+    margin: 10px;
+    font-size: 20px;
+    user-select: none;
+}
+.PointsDiv {
+    text-align: center;
+    width: 320px;
+    margin: 10px;
+    font-size: 80px;
+    height: 200px;
+}
+.upgradeMultipliers {
+    text-align: center;
+    height: 30px;
+    width: 320px;
+    margin: 10px;
+}
+.upgradeMultipliers>button {
+    width: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.resetButtons {
+    text-align: center;
+    height: 30px;
+    width: 320px;
+    margin: 10px;
+    margin-top: 20px;
+}
+.resetButtons>button {
+    width: 100px;
+    margin-left: 10px;
+    margin-right: 10px;
+}

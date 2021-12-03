@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        * {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+        div {
+            font-size: 300%;
+            user-select: none;
+        }
+        button {
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script>
+        // model
+        let points = 0;
+        let pointsPerClick = 1;
+        let smileyIndex = 0;
+        let upgradePointCost = "10";
+        let resetButton = "Start på nytt";
+        let resetColor = "black";
+        let currentModifier = "1x";
+        let isMaxOn = "0";
+
+        // controller
+        function doClick() {
+            points += pointsPerClick;
+            smileyIndex = getNextSmileyIndex(smileyIndex);
+            if(isMaxOn == "1") {
+                upgradePointCost = (Math.floor(points/10)*10);
+            }
+            resetButton = "Start på nytt";
+            resetColor = "black";
+            updateView();
+        }
+        function changeUpgradeAmount(modifier) {
+            if(modifier == "1") {
+                upgradePointCost = "10";
+                isMaxOn = "0";
+                currentModifier = "1x";
+            }
+            else if(modifier == "5") {
+                upgradePointCost = "50";
+                isMaxOn = "0";
+                currentModifier = "5x";
+            }
+            else if(modifier == "10") {
+                upgradePointCost = "100";
+                isMaxOn = "0";
+                currentModifier = "10x";
+            }
+            else if(modifier == "max") {
+                upgradePointCost = (Math.floor(points/10)*10);
+                isMaxOn = "1";
+                currentModifier = "Maks";
+            }
+            updateView()
+        }
+        function buyUpgrade(upgradeCost) {
+            if (points < upgradeCost) return;
+            points -= upgradeCost;
+            pointsPerClick += upgradeCost/10;
+            updateView();
+        }
+        function resetGame() {
+            if (resetButton == "Er du helt sikker på at du vil starte på nytt?") {
+                points = 0;
+                pointsPerClick = 1;
+                smileyIndex = 0;
+                upgradePointCost = "10";
+                resetButton = "Start på nytt";
+                resetColor = "black";
+            }
+            else {
+                resetButton = "Er du helt sikker på at du vil starte på nytt?";
+                resetColor = "red";
+                smileyIndex = 2;
+            }
+            updateView();
+        }
+
+        // view
+        updateView();
+        function updateView() {
+            var smiley = getSmiley(smileyIndex);
+            document.getElementById('app').innerHTML = `
+                <div id="image" onclick="doClick()">${smiley}</div>
+                <div id="pointsInfo">${points}</div>
+                <button onclick="buyUpgrade(${upgradePointCost})">
+                Kjøp oppgraderinger: ${upgradePointCost} poeng (${currentModifier})</button>
+                <br/>
+                <button onclick="changeUpgradeAmount('1')">1x</button>
+                <button onclick="changeUpgradeAmount('5')">5x</button>
+                <button onclick="changeUpgradeAmount('10')">10x</button>
+                <button onclick="changeUpgradeAmount('max')">maks</button>
+                <br/>
+                <button onclick="resetGame()" style="color: ${resetColor}">${resetButton}</button>
+            `;
+        }
+
+        // hjelpefunksjoner
+        function getSmiley(aSmileyIndex) {
+            if (aSmileyIndex == 0) return '😀';
+            if (aSmileyIndex == 1) return '😁';
+            if (aSmileyIndex == 2) return '😢';
+            return '';
+        }
+
+        function getNextSmileyIndex(aSmileyIndex) {
+            const maxSmileyIndex = 1;
+            aSmileyIndex++;
+            if (aSmileyIndex > maxSmileyIndex) {
+                aSmileyIndex = 0;
+            }
+            return aSmileyIndex;
+        }
+
+    </script>
+</body>
+
+</html>

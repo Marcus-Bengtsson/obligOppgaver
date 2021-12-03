@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Test Suite</title>
+<link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.17.2.css">
+
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="https://code.jquery.com/qunit/qunit-2.17.2.js"></script>
+    <script src="oblig2controller.js"></script>
+    <script src="oblig2model.js"></script>
+    <script>
+        function updateView() {
+
+        }
+
+        QUnit.test("doClick tests", function (assert) {
+            assert.equal(doClick(), "Points were updated, smiley was updated, cpm was updated", "doclick default call test");
+
+            model.firstClick = true;
+            doClick()
+            assert.equal(model.firstClick, false, "doclick firstClick test");
+        });
+
+        QUnit.test("buyUpgrade tests", function (assert) {
+            model.player.points = 60;
+            model.actualUpgradePointCost = 50;
+            assert.equal(buyUpgrade(), true, "buyUpgrade valid upgrade test");
+
+            model.player.points = 50;
+            model.actualUpgradePointCost = 105;
+            assert.equal(buyUpgrade(), false, "buyUpgrade invalid upgrade test");
+        });
+
+        QUnit.test("resetGame tests", function (assert) {
+            model.resetColor == "black"
+            assert.equal(resetGame(), "Button was updated", "resetGame first click button update");
+            model.resetColor == "red"
+            assert.equal(resetGame(), "Game was reset", "resetGame second click reset");
+
+            model.resetColor == "black"
+            resetGame()
+            assert.equal(model.resetButtonTxt, "Er du helt sikker på at du vil starte på nytt?", "resetGame first click resetButtonTxt");
+            assert.equal(model.resetColor, "red", "resetGame first click resetColor");
+            assert.equal(model.smileyIndex, 3, "resetGame first click smileyIndex");
+
+            model.player.points = 100;
+            model.player.totalPoints = 100;
+            model.player.pointsPerClick = 20;
+            model.player.playerName = "test";
+            model.smileyIndex = 2;
+            model.actualUpgradePointCost = 50;
+            model.availableUpgrades = 5;
+            model.currentUpgradeMultiplier = 5;
+            model.currentUpgradeMultiplierTxt = "5x";
+            model.resetButtonTxt = "Er du helt sikker på at du vil starte på nytt?";
+            model.resetColor = "red";
+            model.upgradesBought = 19;
+            model.firstClick = false;
+            model.clickCount = 400;
+            model.clicksPerMinute = 300;
+            model.leaderBoardSubmitState = "disabled";
+            model.leaderBoardPlayerIndex = 3;
+            resetGame()
+            assert.equal(model.player.points, 0, "resetGame second click player.points");
+            assert.equal(model.player.totalPoints, 0, "resetGame second click player.totalPoints");
+            assert.equal(model.player.pointsPerClick, 1, "resetGame second click player.pointsPerClick");
+            assert.equal(model.player.playerName, "", "resetGame second click player.totalPoints");
+            assert.equal(model.smileyIndex, 0, "resteGame second click smileyIndex");
+            assert.equal(model.actualUpgradePointCost, 10, "resetGame second click actualUpgradePointCost");
+            assert.equal(model.availableUpgrades, 1, "resetGame second click availableUpgrades");
+            assert.equal(model.currentUpgradeMultiplier, 1, "resetGame second click currentUpgradeMultiplier");
+            assert.equal(model.currentUpgradeMultiplierTxt, "1x", "resetGame second click currentUpgradeMultiplierTxt");
+            assert.equal(model.resetButtonTxt, "Start på nytt", "resetGame second click resetButtonTxt");
+            assert.equal(model.resetColor, "black", "resetGame second click resetColor");
+            assert.equal(model.upgradesBought, 0, "resetGame second click upgradesBought");
+            assert.equal(model.firstClick, true, "resetGame second click firstClick");
+            assert.equal(model.clickCount, 0, "resetGame second click clickCount");
+            assert.equal(model.clicksPerMinute, 0, "resetGame second click clicksPerMinute");
+            assert.equal(model.leaderBoardSubmitState, "", "resetGame second click player.totalPoints");
+            assert.equal(model.leaderBoardPlayerIndex, null, "resetGame second click player.totalPoints");
+
+        });
+
+        QUnit.test("resetCpm tests", function (assert) {
+            assert.equal(resetCpm(), "CPM was reset", "resetCpm default call");
+            model.firstClick = false;
+            model.clickCount = 20;
+            model.clicksPerMinute = 500;
+            resetCpm()
+            assert.equal(model.firstClick, true, "resetCpm firstClick test");
+            assert.equal(model.clickCount, 0, "resetCpm clickCount test");
+            assert.equal(model.clicksPerMinute, 0, "resetCpm clicksPerMinute test");
+        });
+
+        QUnit.test("updatePoints tests", function (assert) {
+            model.player.points = 500000;
+            updatePoints()
+            assert.equal(model.player.pointsTxt, "500000", "updatePoints default call pointsTxt test");
+            assert.equal(updatePoints(), "player has under 1 million points", "updatePoints default call");
+            model.player.points = 10000000;
+            updatePoints()
+            assert.equal(model.player.pointsTxt, "10.00M", "updatePoints > 1M call pointsTxt test");
+            assert.equal(updatePoints(), "player has at least 1 million points", "updatePoints > 1M call");
+        });
+
+        QUnit.test("upgradePointCostCalc 1x modifier default test", function (assert) {
+            model.currentUpgradeMultiplier = 1;
+            model.upgradesBought = 0;
+            model.UpgradecostMultiplier = 1.01;
+            model.baseUpgradePointCost = 10;
+            assert.equal(upgradePointCostCalc(), 10, "upgradePointCostCalc 1x default");
+
+            model.upgradesBought = 100;
+            assert.equal(upgradePointCostCalc(), 27, "upgradePointCostCalc 10x 100 upgrades bought");
+
+            model.upgradesBought = 0;
+            model.UpgradecostMultiplier = 1.02;
+            model.baseUpgradePointCost = 12;
+            assert.equal(upgradePointCostCalc(), 12, "upgradePointCostCalc 1x, 12 base upgrade cost, 1.02 multiplier");
+        });
+
+        QUnit.test("upgradePointCostCalc 5x modifier default test", function (assert) {
+            model.currentUpgradeMultiplier = 5;
+            model.upgradesBought = 0;
+            model.UpgradecostMultiplier = 1.01;
+            model.baseUpgradePointCost = 10;
+            assert.equal(upgradePointCostCalc(), 50, "upgradePointCostCalc 5x default");
+
+            model.upgradesBought = 100;
+            assert.equal(upgradePointCostCalc(), 138, "upgradePointCostCalc 10x 100 upgrades bought");
+
+            model.upgradesBought = 0;
+            model.UpgradecostMultiplier = 1.02;
+            model.baseUpgradePointCost = 12;
+            assert.equal(upgradePointCostCalc(), 62, "upgradePointCostCalc 5x, 12 base upgrade cost, 1.02 multiplier");
+        });
+
+        QUnit.test("upgradePointCostCalc 10x modifier tests", function (assert) {
+            model.currentUpgradeMultiplier = 10;
+            model.upgradesBought = 0;
+            model.UpgradecostMultiplier = 1.01;
+            model.baseUpgradePointCost = 10;
+            assert.equal(upgradePointCostCalc(), 105, "upgradePointCostCalc 10x default");
+
+            model.upgradesBought = 100;
+            assert.equal(upgradePointCostCalc(), 283, "upgradePointCostCalc 10x 100 upgrades bought");
+
+            model.upgradesBought = 0;
+            model.UpgradecostMultiplier = 1.02;
+            model.baseUpgradePointCost = 12;
+            assert.equal(upgradePointCostCalc(), 131, "upgradePointCostCalc 10x, 12 base upgrade cost, 1.02 multiplier");
+        });
+
+        QUnit.test("upgradePointCostCalc max modifier tests", function (assert) {
+            model.currentUpgradeMultiplier = 0;
+            model.upgradesBought = 0;
+            model.UpgradecostMultiplier = 1.01;
+            model.baseUpgradePointCost = 10;
+            model.player.points = 10
+            assert.equal(upgradePointCostCalc(), 10, "upgradePointCostCalc max modifier 10 points point cost");
+            assert.equal(model.availableUpgrades, 1, "upgradePointCostCalc max modifier 10 points available upgrades");
+            model.player.points = 50
+            assert.equal(upgradePointCostCalc(), 50, "upgradePointCostCalc max modifier 50 points point cost");
+            assert.equal(model.availableUpgrades, 5, "upgradePointCostCalc max modifier 50 points available upgrades");
+            model.player.points = 105
+            assert.equal(upgradePointCostCalc(), 105, "upgradePointCostCalc max modifier 105 points point cost");
+            assert.equal(model.availableUpgrades, 10, "upgradePointCostCalc max modifier 105 points available upgrades");
+            model.player.points = 1000
+            assert.equal(upgradePointCostCalc(), 985, "upgradePointCostCalc max modifier 1000 points point cost");
+            assert.equal(model.availableUpgrades, 69, "upgradePointCostCalc max modifier 1000 points available upgrades");
+
+            model.upgradesBought = 100
+            model.player.points = 1000
+            assert.equal(upgradePointCostCalc(), 976, "upgradePointCostCalc max modifier 1000 points point cost");
+            assert.equal(model.availableUpgrades, 31, "upgradePointCostCalc max modifier 1000 points available upgrades");
+            model.player.points = 10000
+            assert.equal(upgradePointCostCalc(), 9944, "upgradePointCostCalc max modifier 10,000 points, 100 upgrades bought point cost");
+            assert.equal(model.availableUpgrades, 155, "upgradePointCostCalc max modifier 10,000 points, 100 upgrades bought available upgrades");
+
+            model.upgradesBought = 0
+            model.UpgradecostMultiplier = 1.02;
+            model.baseUpgradePointCost = 12;
+            model.player.points = 1000
+            assert.equal(upgradePointCostCalc(), 982, "upgradePointCostCalc max modifier 1000 points, 12 base upgrade cost, 1.02 multiplier point cost");
+            assert.equal(model.availableUpgrades, 49, "upgradePointCostCalc max modifier 1000 points, 12 base upgrade cost, 1.02 multiplier available upgrades");
+            model.player.points = 10000
+            assert.equal(upgradePointCostCalc(), 9995, "upgradePointCostCalc max modifier 10,000 points, 12 base upgrade cost, 1.02 multiplier point cost");
+            assert.equal(model.availableUpgrades, 145, "upgradePointCostCalc max modifier 10,000 points, 12 base upgrade cost, 1.02 multiplier available upgrades");
+        });
+
+        QUnit.test("changeUpgradeAmount tests", function (assert) {
+            assert.equal(changeUpgradeAmount('1'), "Upgrade amount was set to 1x", "1x modifier");
+            assert.equal(changeUpgradeAmount('5'), "Upgrade amount was set to 5x", "5x modifier");
+            assert.equal(changeUpgradeAmount('10'), "Upgrade amount was set to 10x", "10x modifier");
+            assert.equal(changeUpgradeAmount('max'), "Upgrade amount was set to max", "max modifier");
+            assert.equal(changeUpgradeAmount('7'), "error, Invalid modifier: changeUpgradeAmount()", "Invalid modifier");
+        });
+
+        QUnit.test("getNextSmileyIndex tests", function (assert) {
+            assert.equal(getNextSmileyIndex(0), 1, "getNextSmileyIndex 0-1 test");
+            assert.equal(getNextSmileyIndex(1), 2, "getNextSmileyIndex 1-2 test");
+            assert.equal(getNextSmileyIndex(2), 0, "getNextSmileyIndex 2-0 test");
+            assert.equal(getNextSmileyIndex(3), 0, "getNextSmileyIndex 3-0 test");
+        });
+
+        QUnit.test("refreshLeaderBoard tests", function (assert) {
+            model.player.playerName = "PlayerOne";
+            model.player.totalPoints = 60000;
+            model.leaderBoardList = [
+                ["Alexander", 100000],
+                ["Marcus", 500000],
+                ["Geir", 12345],
+                ["PlayerOne", 50000],
+                ["Elisabeth", 54321],
+            ];
+            refreshLeaderBoard()
+            assert.deepEqual(model.leaderBoardList, [
+                ["Marcus", 500000],
+                ["Alexander", 100000],
+                ["PlayerOne", 60000],
+                ["Elisabeth", 54321],
+                ["Geir", 12345],
+            ], "refreshLeaderBoard sort+update test");
+            assert.equal(refreshLeaderBoard(), "leaderboard was refreshed", "refreshLeaderBoard default call test");
+            model.player.playerName = "";
+            assert.equal(refreshLeaderBoard(), false, "refreshLeaderBoard empty player name test");
+        });
+
+        QUnit.test("leaderBoardSort tests", function (assert) {
+            model.leaderBoardList = [
+                ["Alexander", 100000],
+                ["Marcus", 500000],
+                ["Geir", 12345],
+                ["Elisabeth", 54321],
+            ]
+            leaderBoardSort()
+            assert.deepEqual(model.leaderBoardList, [
+                ["Marcus", 500000],
+                ["Alexander", 100000],
+                ["Elisabeth", 54321],
+                ["Geir", 12345],
+            ], "leaderBoardSort sorting test");
+        });
+    </script>
+</body>
